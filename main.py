@@ -7,7 +7,7 @@ import json
 
 from google.cloud import bigquery
 from pandas_gbq import to_gbq
-
+import functions_framework
 
 
 
