@@ -121,4 +121,6 @@ def cache_history_record(days,range_of_days):
     + " cached")
 def main_call():
   cache_history_record(0,3)
+if __name__ == '__main__':
+    main_call()
   
