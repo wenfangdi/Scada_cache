@@ -123,7 +123,7 @@ def cache_history_record(days,range_of_days):
     + " cached")
 
 @functions_framework.http
-def main_call():
+def main_call(request): # It have to have a request
     try:
         message = cache_history_record(0, 3)
         return message
@@ -131,5 +131,5 @@ def main_call():
         return f'An error occurred: {str(e)}', 500
 
 if __name__ == "__main__":
-    main_call()
+    main_call(None) # It have to pass in a dummy
   
