@@ -8,9 +8,7 @@ import json
 from google.cloud import bigquery
 from pandas_gbq import to_gbq
 
-from flask import Flask
 
-app = Flask(__name__)
 
 
 conn_params = {
