@@ -23,10 +23,8 @@ conn_str = (
     f"@{conn_params['host']}:{conn_params['port']}/{conn_params['database']}"
 )
 
-engine = create_engine(conn_str)
-
 #Get tables
-def get_partition_tables(from_time, to_time):
+def get_partition_tables(from_time, to_time,engine):
     Query = f'''
     SELECT distinct pname FROM 
     (
@@ -40,7 +38,7 @@ def get_partition_tables(from_time, to_time):
     '''
     # partitions = list(pd.read_sql_query(Query, engine).pname)
     return list(pd.read_sql_query(Query, engine).pname)
-def get_tag_list():
+def get_tag_list(engine):
     Query = f'''
     select 
     json_agg(fii) from(
@@ -79,11 +77,11 @@ def build_query_ignition(partitions, tags_list, from_time, to_time, interval):
     full_query = "select tagpath, interval_time, max(value) as value from ( \n" + " UNION ".join(queries) + "\n ) foo group by 1,2;"
 
     return full_query
-def cache_history_record(days,range_of_days):
-    tags_list = get_tag_list()
+def cache_history_record(days,range_of_days,engine):
+    tags_list = get_tag_list(engine)
     to_time = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0).timestamp()*1000 - days*24*60*60*1000
     from_time = to_time - 24*60*60*1000*range_of_days
-    partitions = get_partition_tables(from_time, to_time)
+    partitions = get_partition_tables(from_time, to_time,engine)
     print(partitions)
     print('from',datetime.fromtimestamp(from_time / 1000, tz=timezone.utc), 'to',datetime.fromtimestamp(to_time / 1000, tz=timezone.utc))
     
@@ -124,12 +122,10 @@ def cache_history_record(days,range_of_days):
 
 @functions_framework.http
 def main_call(request): # It have to have a request
+    engine = create_engine(conn_str)  # this has to be called inside function
     try:
-        message = cache_history_record(0, 3)
+        message = cache_history_record(0, 3,engine)
         return message
     except Exception as e:
         return f'An error occurred: {str(e)}', 500
 
-if __name__ == "__main__":
-    main_call(None) # It have to pass in a dummy
-  
