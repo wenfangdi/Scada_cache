@@ -8,6 +8,10 @@ import json
 from google.cloud import bigquery
 from pandas_gbq import to_gbq
 
+from flask import Flask
+
+app = Flask(__name__)
+
 
 conn_params = {
     "host": "wenm-vms01.ad.dfoundry.co",
@@ -119,8 +123,18 @@ def cache_history_record(days,range_of_days):
     + " to "
     + datetime.fromtimestamp(to_time / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
     + " cached")
+
+@app.route('/')
 def main_call():
-  cache_history_record(0,3)
+    try:
+        cache_history_record(0, 3)
+        return 'Data cached successfully!'
+    except Exception as e:
+        return f'An error occurred: {str(e)}', 500
+
+if __name__ == '__main__':
+    PORT = int(os.environ.get('PORT', 8080))
+    app.run(host='0.0.0.0', port=PORT)
 if __name__ == '__main__':
     main_call()
   
