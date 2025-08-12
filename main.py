@@ -122,7 +122,7 @@ def cache_history_record(days,range_of_days):
     + datetime.fromtimestamp(to_time / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
     + " cached")
 
-@app.route('/')
+@functions_framework.http
 def main_call():
     try:
         cache_history_record(0, 3)
@@ -131,5 +131,5 @@ def main_call():
         return f'An error occurred: {str(e)}', 500
 
 if __name__ == "__main__":
-    main_call(None)
+    main_call()
   
