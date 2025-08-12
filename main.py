@@ -125,8 +125,8 @@ def cache_history_record(days,range_of_days):
 @functions_framework.http
 def main_call():
     try:
-        cache_history_record(0, 3)
-        return 'Data cached successfully!'
+        message = cache_history_record(0, 3)
+        return message
     except Exception as e:
         return f'An error occurred: {str(e)}', 500
 
