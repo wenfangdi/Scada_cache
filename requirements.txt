@@ -8,3 +8,4 @@ db-dtypes==1.*
 google-auth
 requests
 sqlalchemy
+psycopg2-binary
